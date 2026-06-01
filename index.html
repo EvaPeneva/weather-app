@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App | Фаза 1</title>
+
+    <!-- Връзка към CSS файла -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Font Awesome се използва за иконите на времето -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <main class="weather-app">
+        <section class="app-card">
+            <div class="app-header">
+                <p class="eyebrow">JavaScript · HTML · CSS</p>
+                <h1>Weather App</h1>
+                <p class="subtitle">Потърси град и виж текущото време чрез Open-Meteo API.</p>
+            </div>
+
+            <!-- Формата се обработва в script.js чрез submit event -->
+            <form id="search-form" class="search-form">
+                <label for="city-input">Въведи град:</label>
+                <div class="search-row">
+                    <input
+                        type="text"
+                        id="city-input"
+                        placeholder="Напр. Sofia, London, Paris"
+                        autocomplete="off"
+                    >
+                    <button type="submit">Търси</button>
+                </div>
+            </form>
+
+            <!-- Съобщение при зареждане. Скрито е по подразбиране. -->
+            <p id="loading" class="loading hidden">
+                <i class="fa-solid fa-spinner"></i>
+                Зареждане на данни...
+            </p>
+
+            <!-- Съобщение при грешка. Скрито е по подразбиране. -->
+            <p id="error-message" class="error-message hidden"></p>
+
+            <!-- Тук JavaScript записва получените данни за времето -->
+            <section id="weather-result" class="weather-result hidden" aria-live="polite">
+                <div class="city-line">
+                    <h2 id="city-name">--</h2>
+                    <span id="country-name" class="country-name">--</span>
+                </div>
+
+                <div class="weather-main">
+                    <i id="weather-icon" class="fa-solid fa-cloud-sun weather-icon"></i>
+                    <div>
+                        <p id="temperature" class="temperature">--°C</p>
+                        <p id="weather-condition" class="weather-condition">--</p>
+                    </div>
+                </div>
+
+                <div class="weather-details">
+                    <div class="detail-box">
+                        <span>Вятър</span>
+                        <strong id="wind-speed">-- km/h</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span>Координати</span>
+                        <strong id="coordinates">--</strong>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <!-- defer означава, че JS ще се зареди след HTML структурата -->
+    <script src="script.js" defer></script>
+</body>
+</html>
