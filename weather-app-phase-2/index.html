@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App | Фаза 1</title>
+    <title>Weather App | Фаза 2</title>
 
     <!-- Връзка към CSS файла -->
     <link rel="stylesheet" href="styles.css">
@@ -17,10 +17,10 @@
             <div class="app-header">
                 <p class="eyebrow">JavaScript · HTML · CSS</p>
                 <h1>Weather App</h1>
-                <p class="subtitle">Потърси град и виж текущото време чрез Open-Meteo API.</p>
+                <p class="subtitle">Фаза 2 започва с по-чиста структура и разделен JavaScript код.</p>
             </div>
 
-            <!-- Формата се обработва в script.js чрез submit event -->
+            <!-- Формата се обработва в js/app.js чрез submit event -->
             <form id="search-form" class="search-form">
                 <label for="city-input">Въведи град:</label>
                 <div class="search-row">
@@ -72,7 +72,7 @@
         </section>
     </main>
 
-    <!-- defer означава, че JS ще се зареди след HTML структурата -->
-    <script src="script.js" defer></script>
+    <!-- Фаза 2 използва ES modules. Най-добре се тества с Live Server. -->
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
