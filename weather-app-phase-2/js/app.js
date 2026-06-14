@@ -9,6 +9,7 @@ import {
     getCityInputValue,
     setCityInputValue,
     displayWeather,
+    renderForecast,
     toggleTemperatureUnit,
     renderSearchHistory,
     showLoading,
@@ -43,6 +44,7 @@ async function loadWeather(city, shouldSaveHistory) {
     try {
         const weatherData = await fetchWeatherByCity(city);
         displayWeather(weatherData.place, weatherData.weather);
+        renderForecast(weatherData.daily);
 
         if (shouldSaveHistory) {
             saveToHistory(city);

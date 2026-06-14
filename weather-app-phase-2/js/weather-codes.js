@@ -1,6 +1,6 @@
 /* =========================================================
    Weather codes module
-   Converts Open-Meteo weather codes to text, icons and themes.
+   Converts Open-Meteo weather codes to text, icons, themes and icon accessories.
    ========================================================= */
 
 const weatherConditionsBg = {
@@ -36,7 +36,7 @@ const weatherConditionsBg = {
 
 const weatherIcons = {
     0: 'fa-sun',
-    1: 'fa-cloud-sun',
+    1: 'fa-sun',
     2: 'fa-cloud-sun',
     3: 'fa-cloud',
     45: 'fa-smog',
@@ -103,4 +103,32 @@ export function getWeatherTheme(code, isDay) {
     }
 
     return 'weather-cloudy';
+}
+
+export function getWeatherAccessory(code) {
+    if (code === 0 || code === 1) {
+        return 'accessory-sun';
+    }
+
+    if (code === 2 || code === 3) {
+        return 'accessory-cloud';
+    }
+
+    if (code === 45 || code === 48) {
+        return 'accessory-fog';
+    }
+
+    if ((code >= 51 && code <= 67) || code === 80 || code === 81 || code === 82) {
+        return 'accessory-rain';
+    }
+
+    if ((code >= 71 && code <= 77) || code === 85 || code === 86) {
+        return 'accessory-snow';
+    }
+
+    if (code === 95 || code === 96 || code === 99) {
+        return 'accessory-storm';
+    }
+
+    return 'accessory-cloud';
 }

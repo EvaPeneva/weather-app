@@ -5,11 +5,12 @@
 
 export async function fetchWeatherByCity(city) {
     const place = await fetchCityCoordinates(city);
-    const weather = await fetchCurrentWeather(place.latitude, place.longitude);
+    const weatherData = await fetchWeatherByCoordinates(place.latitude, place.longitude);
 
     return {
         place,
-        weather
+        weather: weatherData.current_weather,
+        daily: weatherData.daily
     };
 }
 
@@ -19,8 +20,7 @@ async function fetchCityCoordinates(city) {
 
     for (const language of languages) {
         try {
-            const place = await searchCity(city, language);
-            return place;
+            return await searchCity(city, language);
         } catch (error) {
             lastError = error;
         }
@@ -46,8 +46,16 @@ async function searchCity(city, language) {
     return data.results[0];
 }
 
-async function fetchCurrentWeather(latitude, longitude) {
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=auto`;
+async function fetchWeatherByCoordinates(latitude, longitude) {
+    const dailyParams = [
+        'weathercode',
+        'temperature_2m_max',
+        'temperature_2m_min',
+        'windspeed_10m_max',
+        'precipitation_probability_max'
+    ].join(',');
+
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=${dailyParams}&forecast_days=6&timezone=auto`;
     const response = await fetch(weatherUrl);
 
     if (!response.ok) {
@@ -56,9 +64,9 @@ async function fetchCurrentWeather(latitude, longitude) {
 
     const data = await response.json();
 
-    if (!data.current_weather) {
+    if (!data.current_weather || !data.daily) {
         throw new Error('Няма налични данни за времето.');
     }
 
-    return data.current_weather;
+    return data;
 }

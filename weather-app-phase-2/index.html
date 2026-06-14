@@ -17,7 +17,6 @@
             <div class="app-header">
                 <p class="eyebrow">JavaScript · HTML · CSS</p>
                 <h1>Weather App</h1>
-                <p class="subtitle">Потърси град и виж текущото време чрез Open-Meteo API.</p>
             </div>
 
             <form id="search-form" class="search-form">
@@ -56,7 +55,9 @@
                 </div>
 
                 <div class="weather-main">
-                    <i id="weather-icon" class="fa-solid fa-cloud-sun weather-icon"></i>
+                    <div id="weather-icon-badge" class="weather-icon-badge theme-cloudy">
+                        <i id="weather-icon" class="fa-solid fa-cloud-sun weather-icon"></i>
+                    </div>
                     <div>
                         <p id="temperature" class="temperature">--°C</p>
                         <p id="weather-condition" class="weather-condition">--</p>
@@ -73,6 +74,17 @@
                         <strong id="coordinates">--</strong>
                     </div>
                 </div>
+            </section>
+
+            <section id="forecast-section" class="forecast-section hidden" aria-label="5-дневна прогноза">
+                <div class="forecast-header">
+                    <div>
+                        <p class="section-eyebrow">Прогноза</p>
+                        <h2>Следващи 5 дни</h2>
+                    </div>
+                    <span class="forecast-note">min / max</span>
+                </div>
+                <div id="forecast-list" class="forecast-list"></div>
             </section>
         </section>
     </main>

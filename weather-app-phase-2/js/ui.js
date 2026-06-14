@@ -3,7 +3,12 @@
    Handles DOM elements and screen updates. No fetch requests here.
    ========================================================= */
 
-import { getWeatherCondition, getWeatherIcon, getWeatherTheme } from './weather-codes.js';
+import {
+    getWeatherCondition,
+    getWeatherIcon,
+    getWeatherTheme,
+    getWeatherAccessory
+} from './weather-codes.js';
 
 export const elements = {
     searchForm: document.getElementById('search-form'),
@@ -17,13 +22,17 @@ export const elements = {
     cityName: document.getElementById('city-name'),
     countryName: document.getElementById('country-name'),
     weatherIcon: document.getElementById('weather-icon'),
+    weatherIconBadge: document.getElementById('weather-icon-badge'),
     temperature: document.getElementById('temperature'),
     weatherCondition: document.getElementById('weather-condition'),
     windSpeed: document.getElementById('wind-speed'),
-    coordinates: document.getElementById('coordinates')
+    coordinates: document.getElementById('coordinates'),
+    forecastSection: document.getElementById('forecast-section'),
+    forecastList: document.getElementById('forecast-list')
 };
 
 let lastTemperatureC = null;
+let lastForecastDaily = null;
 let currentUnit = 'C';
 
 export function getCityInputValue() {
@@ -40,16 +49,70 @@ export function displayWeather(place, weather) {
     lastTemperatureC = weather.temperature;
     currentUnit = 'C';
 
+    const theme = getWeatherTheme(weather.weathercode, weather.is_day);
+
     elements.cityName.textContent = place.name;
     elements.countryName.textContent = place.country_code || '';
     elements.weatherCondition.textContent = getWeatherCondition(weather.weathercode);
     elements.windSpeed.textContent = `${weather.windspeed} km/h`;
     elements.coordinates.textContent = `${place.latitude.toFixed(2)}, ${place.longitude.toFixed(2)}`;
     elements.weatherIcon.className = `fa-solid ${getWeatherIcon(weather.weathercode)} weather-icon`;
-    setWeatherTheme(getWeatherTheme(weather.weathercode, weather.is_day));
+    elements.weatherIconBadge.className = `weather-icon-badge ${theme} ${getWeatherAccessory(weather.weathercode)}`;
 
+    setWeatherTheme(theme);
     updateTemperatureDisplay();
     elements.weatherResult.classList.remove('hidden');
+}
+
+export function renderForecast(dailyData) {
+    lastForecastDaily = dailyData;
+    renderForecastCards();
+}
+
+function renderForecastCards() {
+    elements.forecastList.innerHTML = '';
+
+    if (!lastForecastDaily || !lastForecastDaily.time) {
+        elements.forecastSection.classList.add('hidden');
+        return;
+    }
+
+    const days = lastForecastDaily.time.slice(1, 6);
+
+    days.forEach((date, index) => {
+        const realIndex = index + 1;
+        const weatherCode = lastForecastDaily.weathercode[realIndex];
+        const theme = getWeatherTheme(weatherCode, 1);
+        const card = document.createElement('article');
+        const dayName = formatDayName(date);
+        const maxTemp = lastForecastDaily.temperature_2m_max[realIndex];
+        const minTemp = lastForecastDaily.temperature_2m_min[realIndex];
+        const wind = Math.round(lastForecastDaily.windspeed_10m_max[realIndex]);
+        const rainChance = lastForecastDaily.precipitation_probability_max?.[realIndex] ?? 0;
+
+        card.className = `forecast-card ${theme}`;
+        card.innerHTML = `
+            <div class="forecast-day">
+                <strong>${dayName}</strong>
+                <span>${formatShortDate(date)}</span>
+            </div>
+            <div class="forecast-icon-badge ${theme} ${getWeatherAccessory(weatherCode)}">
+                <i class="fa-solid ${getWeatherIcon(weatherCode)}"></i>
+            </div>
+            <div class="forecast-info">
+                <p>${getWeatherCondition(weatherCode)}</p>
+                <strong>${formatTemperature(minTemp)} / ${formatTemperature(maxTemp)}</strong>
+            </div>
+            <div class="forecast-extra">
+                <span><i class="fa-solid fa-wind"></i> ${wind} km/h</span>
+                <span><i class="fa-solid fa-droplet"></i> ${rainChance}%</span>
+            </div>
+        `;
+
+        elements.forecastList.appendChild(card);
+    });
+
+    elements.forecastSection.classList.remove('hidden');
 }
 
 export function toggleTemperatureUnit() {
@@ -59,6 +122,7 @@ export function toggleTemperatureUnit() {
 
     currentUnit = currentUnit === 'C' ? 'F' : 'C';
     updateTemperatureDisplay();
+    renderForecastCards();
 }
 
 function updateTemperatureDisplay() {
@@ -67,15 +131,16 @@ function updateTemperatureDisplay() {
         return;
     }
 
+    elements.temperature.textContent = formatTemperature(lastTemperatureC);
+    elements.unitToggle.textContent = currentUnit === 'C' ? 'Покажи във °F' : 'Покажи във °C';
+}
+
+function formatTemperature(celsius) {
     if (currentUnit === 'C') {
-        elements.temperature.textContent = `${Math.round(lastTemperatureC)}°C`;
-        elements.unitToggle.textContent = 'Покажи във °F';
-        return;
+        return `${Math.round(celsius)}°C`;
     }
 
-    const fahrenheit = lastTemperatureC * 9 / 5 + 32;
-    elements.temperature.textContent = `${Math.round(fahrenheit)}°F`;
-    elements.unitToggle.textContent = 'Покажи във °C';
+    return `${Math.round(celsius * 9 / 5 + 32)}°F`;
 }
 
 export function renderSearchHistory(history, onSelectCity) {
@@ -99,7 +164,6 @@ export function renderSearchHistory(history, onSelectCity) {
     elements.historySection.classList.remove('hidden');
 }
 
-
 function setWeatherTheme(themeName) {
     const themeClasses = [
         'weather-clear',
@@ -115,6 +179,17 @@ function setWeatherTheme(themeName) {
     document.body.classList.add(themeName);
 }
 
+function formatDayName(dateString) {
+    return new Date(dateString).toLocaleDateString('bg-BG', { weekday: 'short' });
+}
+
+function formatShortDate(dateString) {
+    return new Date(dateString).toLocaleDateString('bg-BG', {
+        day: '2-digit',
+        month: '2-digit'
+    });
+}
+
 export function showLoading() {
     elements.loading.classList.remove('hidden');
     elements.errorMessage.classList.add('hidden');
@@ -128,6 +203,7 @@ export function showError(message) {
     elements.errorMessage.textContent = message;
     elements.errorMessage.classList.remove('hidden');
     elements.weatherResult.classList.add('hidden');
+    elements.forecastSection.classList.add('hidden');
 }
 
 export function hideError() {
