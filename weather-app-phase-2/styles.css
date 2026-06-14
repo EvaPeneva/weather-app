@@ -1,10 +1,8 @@
 /* =========================================================
    Weather App - Phase 2
-   Засега дизайнът остава близък до Фаза 1.
-   В следващи commits ще добавяме нови секции и подобрения.
+   Styling for the page, search form, weather card, unit button and history.
    ========================================================= */
 
-/* Базово зануляване, за да изглежда еднакво в различни браузъри */
 * {
     margin: 0;
     padding: 0;
@@ -22,11 +20,54 @@ body {
     justify-content: center;
     align-items: center;
     padding: 24px;
+    transition: background 0.4s ease, color 0.4s ease;
+}
+
+body.weather-clear {
+    background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 35%),
+        linear-gradient(135deg, #fde68a, #38bdf8);
+}
+
+body.weather-cloudy {
+    background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.85), transparent 35%),
+        linear-gradient(135deg, #cbd5e1, #60a5fa);
+}
+
+body.weather-rainy {
+    background:
+        radial-gradient(circle at top left, rgba(219, 234, 254, 0.85), transparent 35%),
+        linear-gradient(135deg, #64748b, #1d4ed8);
+}
+
+body.weather-snowy {
+    background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 35%),
+        linear-gradient(135deg, #e0f2fe, #93c5fd);
+}
+
+body.weather-stormy {
+    background:
+        radial-gradient(circle at top left, rgba(199, 210, 254, 0.75), transparent 35%),
+        linear-gradient(135deg, #312e81, #475569);
+}
+
+body.weather-foggy {
+    background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.8), transparent 35%),
+        linear-gradient(135deg, #d1d5db, #94a3b8);
+}
+
+body.weather-night {
+    background:
+        radial-gradient(circle at top left, rgba(191, 219, 254, 0.35), transparent 35%),
+        linear-gradient(135deg, #0f172a, #1e3a8a);
 }
 
 .weather-app {
     width: 100%;
-    max-width: 460px;
+    max-width: 480px;
 }
 
 .app-card {
@@ -107,6 +148,57 @@ button:hover {
     transform: translateY(-1px);
 }
 
+.toolbar {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.secondary-button {
+    background: #e0f2fe;
+    color: #075985;
+    border: 1px solid #bae6fd;
+    padding: 10px 14px;
+    font-size: 0.92rem;
+}
+
+.secondary-button:hover {
+    background: #bae6fd;
+}
+
+.history-section {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.65);
+}
+
+.history-section p {
+    font-size: 0.9rem;
+    color: #475569;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.history-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.history-button {
+    padding: 8px 11px;
+    border-radius: 999px;
+    background: #f8fafc;
+    color: #1e3a8a;
+    border: 1px solid #bfdbfe;
+    font-size: 0.86rem;
+}
+
+.history-button:hover {
+    background: #dbeafe;
+}
+
 .loading,
 .error-message {
     margin-top: 18px;
@@ -166,7 +258,16 @@ button:hover {
 .weather-icon {
     font-size: 4rem;
     color: #f59e0b;
+    transition: color 0.3s ease;
 }
+
+body.weather-clear .weather-icon { color: #f59e0b; }
+body.weather-cloudy .weather-icon { color: #64748b; }
+body.weather-rainy .weather-icon { color: #2563eb; }
+body.weather-snowy .weather-icon { color: #38bdf8; }
+body.weather-stormy .weather-icon { color: #7c3aed; }
+body.weather-foggy .weather-icon { color: #94a3b8; }
+body.weather-night .weather-icon { color: #facc15; }
 
 .temperature {
     font-size: 3rem;
@@ -222,8 +323,13 @@ button:hover {
         flex-direction: column;
     }
 
-    button {
+    button,
+    .secondary-button {
         width: 100%;
+    }
+
+    .toolbar {
+        justify-content: stretch;
     }
 
     .weather-main,

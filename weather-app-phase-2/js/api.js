@@ -1,7 +1,6 @@
 /* =========================================================
    API module
-   Този файл съдържа само fetch заявките към Open-Meteo.
-   Тук няма DOM логика.
+   Contains only requests to the Open-Meteo APIs.
    ========================================================= */
 
 export async function fetchWeatherByCity(city) {
@@ -15,7 +14,23 @@ export async function fetchWeatherByCity(city) {
 }
 
 async function fetchCityCoordinates(city) {
-    const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=bg&format=json`;
+    const languages = ['en', 'bg'];
+    let lastError = null;
+
+    for (const language of languages) {
+        try {
+            const place = await searchCity(city, language);
+            return place;
+        } catch (error) {
+            lastError = error;
+        }
+    }
+
+    throw lastError || new Error('Градът не е намерен. Провери дали е написан правилно.');
+}
+
+async function searchCity(city, language) {
+    const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=${language}&format=json`;
     const response = await fetch(geoUrl);
 
     if (!response.ok) {

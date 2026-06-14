@@ -1,2 +1,2 @@
-// Фаза 2 вече използва JavaScript модули в папката js/.
-// Главният файл е js/app.js, който се зарежда от index.html.
+// Phase 2 uses JavaScript modules from the js/ folder.
+// The main file is js/app.js and it is loaded from index.html.
