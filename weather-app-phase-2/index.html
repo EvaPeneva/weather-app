@@ -10,6 +10,9 @@
 
     <!-- Font Awesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Leaflet map styles -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
     <main class="weather-app">
@@ -86,9 +89,27 @@
                 </div>
                 <div id="forecast-list" class="forecast-list"></div>
             </section>
+
+            <section class="map-section" aria-label="Интерактивна карта">
+                <div class="map-header">
+                    <div>
+                        <p class="section-eyebrow">Карта</p>
+                        <h2>Избери място</h2>
+                    </div>
+                    <span class="map-note">клик върху картата</span>
+                </div>
+                <div class="map-hint">
+                    <span><i class="fa-solid fa-location-dot"></i> Цветен маркер според времето</span>
+                    <span><i class="fa-solid fa-hand-pointer"></i> Кликни върху карта</span>
+                </div>
+                <div id="weather-map" class="weather-map"></div>
+                <p id="map-status" class="map-status">Картата е готова. Избери точка или потърси град.</p>
+            </section>
         </section>
     </main>
 
+    <!-- Leaflet map library -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="js/app.js"></script>
 </body>
 </html>

@@ -1,11 +1,22 @@
 /* =========================================================
    API module
-   Contains only requests to the Open-Meteo APIs.
+   Contains requests to Open-Meteo and reverse geocoding.
    ========================================================= */
 
 export async function fetchWeatherByCity(city) {
     const place = await fetchCityCoordinates(city);
     const weatherData = await fetchWeatherByCoordinates(place.latitude, place.longitude);
+
+    return {
+        place,
+        weather: weatherData.current_weather,
+        daily: weatherData.daily
+    };
+}
+
+export async function fetchWeatherFromMap(latitude, longitude) {
+    const place = await reverseGeocode(latitude, longitude);
+    const weatherData = await fetchWeatherByCoordinates(latitude, longitude);
 
     return {
         place,
@@ -43,7 +54,10 @@ async function searchCity(city, language) {
         throw new Error('Градът не е намерен. Провери дали е написан правилно.');
     }
 
-    return data.results[0];
+    return {
+        ...data.results[0],
+        isMapFallback: false
+    };
 }
 
 async function fetchWeatherByCoordinates(latitude, longitude) {
@@ -69,4 +83,64 @@ async function fetchWeatherByCoordinates(latitude, longitude) {
     }
 
     return data;
+}
+
+async function reverseGeocode(latitude, longitude) {
+    try {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1&accept-language=bg`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error('Reverse geocoding failed.');
+        }
+
+        const data = await response.json();
+        const address = data.address || {};
+        const name = getReadablePlaceName(address, data, latitude, longitude);
+
+        return {
+            name,
+            country_code: address.country_code ? address.country_code.toUpperCase() : '',
+            latitude,
+            longitude,
+            isMapFallback: name.startsWith('Точка')
+        };
+    } catch {
+        return createFallbackPlace(latitude, longitude);
+    }
+}
+
+function getReadablePlaceName(address, data, latitude, longitude) {
+    const cityLikeName =
+        address.city ||
+        address.town ||
+        address.village ||
+        address.hamlet ||
+        address.municipality ||
+        address.county ||
+        address.state_district ||
+        data.name;
+
+    if (cityLikeName) {
+        return cleanPlaceName(cityLikeName);
+    }
+
+    return createFallbackPlace(latitude, longitude).name;
+}
+
+function cleanPlaceName(name) {
+    return String(name)
+        .replace('Община ', '')
+        .replace('Municipality of ', '')
+        .trim();
+}
+
+function createFallbackPlace(latitude, longitude) {
+    return {
+        name: `Точка ${latitude.toFixed(2)}, ${longitude.toFixed(2)}`,
+        country_code: '',
+        latitude,
+        longitude,
+        isMapFallback: true
+    };
 }

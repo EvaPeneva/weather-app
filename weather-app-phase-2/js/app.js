@@ -1,9 +1,10 @@
 /* =========================================================
    App module
-   Connects UI events with API functions and localStorage history.
+   Connects UI events with API functions, map clicks and localStorage history.
    ========================================================= */
 
-import { fetchWeatherByCity } from './api.js';
+import { fetchWeatherByCity, fetchWeatherFromMap } from './api.js';
+import { initWeatherMap, updateMapMarker } from './map.js';
 import {
     elements,
     getCityInputValue,
@@ -12,6 +13,7 @@ import {
     renderForecast,
     toggleTemperatureUnit,
     renderSearchHistory,
+    setMapStatus,
     showLoading,
     hideLoading,
     showError
@@ -29,7 +31,7 @@ elements.searchForm.addEventListener('submit', async function (event) {
         return;
     }
 
-    await loadWeather(city, true);
+    await loadWeatherByCity(city, true);
 });
 
 elements.unitToggle.addEventListener('click', function () {
@@ -37,28 +39,66 @@ elements.unitToggle.addEventListener('click', function () {
 });
 
 renderSearchHistory(getSearchHistory(), handleHistoryClick);
+initWeatherMap(handleMapClick);
 
-async function loadWeather(city, shouldSaveHistory) {
+async function loadWeatherByCity(city, shouldSaveHistory) {
     showLoading();
+    setMapStatus('Зареждане на данни за избрания град...');
 
     try {
         const weatherData = await fetchWeatherByCity(city);
-        displayWeather(weatherData.place, weatherData.weather);
-        renderForecast(weatherData.daily);
+        showWeatherData(weatherData);
+        updateMapMarker(weatherData.place.latitude, weatherData.place.longitude, weatherData.place.name, weatherData.weather);
+        setMapStatus(`Картата показва: ${weatherData.place.name}.`);
 
         if (shouldSaveHistory) {
             saveToHistory(city);
         }
     } catch (error) {
         showError(error.message);
+        setMapStatus('Не успяхме да намерим мястото.');
     } finally {
         hideLoading();
     }
 }
 
+async function loadWeatherByCoordinates(latitude, longitude) {
+    showLoading();
+    setMapStatus('Зареждане на времето за избраната точка...');
+
+    try {
+        const weatherData = await fetchWeatherFromMap(latitude, longitude);
+        showWeatherData(weatherData);
+        if (!weatherData.place.isMapFallback) {
+            setCityInputValue(weatherData.place.name);
+            saveToHistory(weatherData.place.name);
+            setMapStatus(`Избрано място от картата: ${weatherData.place.name}.`);
+        } else {
+            setCityInputValue(`${latitude.toFixed(2)}, ${longitude.toFixed(2)}`);
+            setMapStatus('Избрана е точка от картата. Няма намерено име на град, но времето е заредено по координати.');
+        }
+
+        updateMapMarker(latitude, longitude, weatherData.place.name, weatherData.weather);
+    } catch (error) {
+        showError(error.message);
+        setMapStatus('Не успяхме да заредим времето за тази точка.');
+    } finally {
+        hideLoading();
+    }
+}
+
+function showWeatherData(weatherData) {
+    displayWeather(weatherData.place, weatherData.weather);
+    renderForecast(weatherData.daily);
+}
+
 async function handleHistoryClick(city) {
     setCityInputValue(city);
-    await loadWeather(city, true);
+    await loadWeatherByCity(city, true);
+}
+
+async function handleMapClick(latitude, longitude) {
+    await loadWeatherByCoordinates(latitude, longitude);
 }
 
 function getSearchHistory() {

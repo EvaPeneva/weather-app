@@ -28,7 +28,8 @@ export const elements = {
     windSpeed: document.getElementById('wind-speed'),
     coordinates: document.getElementById('coordinates'),
     forecastSection: document.getElementById('forecast-section'),
-    forecastList: document.getElementById('forecast-list')
+    forecastList: document.getElementById('forecast-list'),
+    mapStatus: document.getElementById('map-status')
 };
 
 let lastTemperatureC = null;
@@ -204,6 +205,10 @@ export function showError(message) {
     elements.errorMessage.classList.remove('hidden');
     elements.weatherResult.classList.add('hidden');
     elements.forecastSection.classList.add('hidden');
+}
+
+export function setMapStatus(message) {
+    elements.mapStatus.textContent = message;
 }
 
 export function hideError() {

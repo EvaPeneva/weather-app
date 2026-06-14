@@ -33,6 +33,9 @@ weather-app-phase-2/
 - Търсенето работи и с английски, и с български имена на градове.
 - Добавя се цветна тема според текущото време.
 - Иконите имат различни цветове и малки декоративни елементи според времето.
+- Добавена е интерактивна карта с Leaflet и OpenStreetMap.
+- При клик върху картата приложението зарежда времето за избраната точка.
+- При търсене на град картата се премества към него.
 
 ## Важно за стартиране
 
@@ -56,3 +59,11 @@ weather-app-phase-2/
 - допълнителни данни за времето
 - BG / EN превключвател
 - бутон за моята локация
+
+
+## Map updates
+
+- The map starts centered on Bulgaria without showing Sofia as selected by default.
+- Clicking the map loads weather by coordinates and moves a colored weather marker.
+- The marker popup shows the selected place, current temperature and condition.
+- Reverse geocoding uses a city-level lookup so district names like “Южен” are avoided when a city name is available.

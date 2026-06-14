@@ -348,7 +348,7 @@ body.weather-night .weather-icon { color: #facc15; }
    ========================================================= */
 
 .weather-app {
-    max-width: 720px;
+    max-width: 860px;
 }
 
 .weather-main {
@@ -602,4 +602,150 @@ body.weather-night .weather-icon { color: #facc15; }
     .forecast-info {
         flex: 1;
     }
+}
+
+
+/* =========================================================
+   Interactive map section
+   ========================================================= */
+
+.map-section {
+    margin-top: 24px;
+    padding: 20px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.map-header h2 {
+    color: #0f172a;
+    font-size: 1.25rem;
+}
+
+.map-note {
+    color: #64748b;
+    font-weight: bold;
+    font-size: 0.86rem;
+}
+
+.weather-map {
+    height: 330px;
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 2px solid rgba(191, 219, 254, 0.9);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+}
+
+.map-status {
+    margin-top: 12px;
+    color: #475569;
+    font-weight: bold;
+    font-size: 0.92rem;
+    line-height: 1.4;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 12px;
+}
+
+.leaflet-popup-content {
+    font-weight: bold;
+    color: #123047;
+}
+
+@media (max-width: 520px) {
+    .map-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .weather-map {
+        height: 260px;
+    }
+}
+
+/* Map hints and custom weather marker */
+.map-hint {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+    color: #475569;
+    font-size: 0.88rem;
+    font-weight: bold;
+}
+
+.map-hint span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(191, 219, 254, 0.8);
+}
+
+.weather-map-marker {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.25);
+    font-size: 1.35rem;
+}
+
+.weather-map-marker.weather-clear {
+    background: linear-gradient(135deg, #fde68a, #f97316);
+    color: #7c2d12;
+}
+
+.weather-map-marker.weather-cloudy {
+    background: linear-gradient(135deg, #dbeafe, #64748b);
+    color: #0f172a;
+}
+
+.weather-map-marker.weather-rainy {
+    background: linear-gradient(135deg, #93c5fd, #1d4ed8);
+    color: white;
+}
+
+.weather-map-marker.weather-snowy {
+    background: linear-gradient(135deg, #f8fafc, #bae6fd);
+    color: #0369a1;
+}
+
+.weather-map-marker.weather-stormy {
+    background: linear-gradient(135deg, #c4b5fd, #312e81);
+    color: #fef3c7;
+}
+
+.weather-map-marker.weather-foggy {
+    background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+    color: #334155;
+}
+
+.weather-map-marker.weather-night {
+    background: linear-gradient(135deg, #1e293b, #020617);
+    color: #bfdbfe;
+}
+
+.map-popup {
+    display: grid;
+    gap: 4px;
+    min-width: 130px;
+}
+
+.map-popup span {
+    color: #475569;
+    font-weight: 600;
 }
