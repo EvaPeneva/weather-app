@@ -1,69 +1,76 @@
 # Weather App - Phase 2
 
-Това е втора фаза на училищния проект Weather App.
+This is the second phase of the school Weather App project. It builds on top of Phase 1 instead of starting again from zero.
 
-Фаза 2 надгражда върху вече готовата Фаза 1. Приложението вече има по-чиста JavaScript структура, превключване между °C и °F, история на последните търсения и 5-дневна прогноза.
+## Main Phase 2 requirements covered
 
-## Файлова структура
+- The old `showError` problem is avoided. Error handling is separated and does not use deleted DOM elements.
+- DOM references are collected in one object inside `js/ui.js`.
+- JavaScript is split into ES modules with `import` / `export`.
+- `index.html` loads the app with `<script type="module" src="js/app.js"></script>`.
+- The app has a °C / °F switch. It changes the current temperature, forecast temperatures and map popup temperature without making a new API request.
+- The last 5 searched places are saved with `localStorage`.
+- README documentation, inline comments and JSDoc-style comments are included.
+
+## Extra features
+
+- 5-day forecast with min/max temperature, weather icon, wind speed, rain chance and UV index.
+- Dynamic background and icon colors based on the current weather.
+- Interactive map with OpenStreetMap / Leaflet.
+- Clicking on the map loads weather by coordinates and moves the marker.
+- Searching for a city also moves the map marker.
+- “My location” button using browser geolocation.
+- BG / EN interface switch.
+- Extra current weather details: feels-like temperature, humidity, pressure and precipitation.
+- Comfort score calculated from temperature, wind, rain and humidity.
+
+## File structure
 
 ```text
 weather-app-phase-2/
 ├── index.html
 ├── styles.css
 ├── README.md
+├── script.js
 └── js/
     ├── app.js
     ├── api.js
+    ├── map.js
     ├── ui.js
     └── weather-codes.js
 ```
 
-## Какво е променено спрямо Фаза 1
+`script.js` is kept only as a note showing the old Phase 1 structure. Phase 2 starts from `js/app.js`.
 
-- JavaScript кодът е разделен на модули.
-- `index.html` зарежда `js/app.js` като ES module.
-- API заявките са отделени в `api.js`.
-- DOM промените са отделени в `ui.js`.
-- Weather code логиката е отделена в `weather-codes.js`.
-- Добавен е бутон за превключване между °C и °F.
-- Добавена е история на последните 5 търсени града чрез `localStorage`.
-- Добавена е 5-дневна прогноза с минимална и максимална температура.
-- Прогнозата показва описание, икона, максимален вятър и шанс за валеж.
-- Weather описанията по подразбиране са на български.
-- Търсенето работи и с английски, и с български имена на градове.
-- Добавя се цветна тема според текущото време.
-- Иконите имат различни цветове и малки декоративни елементи според времето.
-- Добавена е интерактивна карта с Leaflet и OpenStreetMap.
-- При клик върху картата приложението зарежда времето за избраната точка.
-- При търсене на град картата се премества към него.
+## Modules
 
-## Важно за стартиране
+- `app.js` - connects events, API calls, map clicks, language switching and history.
+- `api.js` - contains all `fetch()` requests to Open-Meteo and Nominatim.
+- `ui.js` - changes the DOM, translates the interface, renders current weather and forecast.
+- `map.js` - creates the map and updates the weather marker.
+- `weather-codes.js` - converts weather codes to text, icons and visual themes.
 
-Понеже проектът използва JavaScript модули, най-добре е да се стартира с Live Server във VS Code.
+## How to run
 
-## Тестове
+Use **Live Server** in VS Code. ES modules work best when the project is served locally instead of opened directly as a file.
 
-Пробвай:
+## Test checklist
+
+Try:
 
 - Sofia
 - London
 - София
 - Лондон
-- празно поле
-- несъществуващ град
-- превключване °C / °F
-- клик върху град от историята
+- empty input
+- a fake city name
+- °C / °F switch
+- BG / EN switch
+- My location button
+- click on the map
+- click on a city from search history
+- check Console for red errors
 
-## Следващи стъпки
+## Notes for presentation
 
-- допълнителни данни за времето
-- BG / EN превключвател
-- бутон за моята локация
-
-
-## Map updates
-
-- The map starts centered on Bulgaria without showing Sofia as selected by default.
-- Clicking the map loads weather by coordinates and moves a colored weather marker.
-- The marker popup shows the selected place, current temperature and condition.
-- Reverse geocoding uses a city-level lookup so district names like “Южен” are avoided when a city name is available.
+The project uses HTML, CSS and vanilla JavaScript for the main logic. Leaflet is used only for the optional interactive map. Weather data comes from Open-Meteo, and reverse geocoding for map clicks uses Nominatim.

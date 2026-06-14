@@ -22,8 +22,9 @@
                 <h1>Weather App</h1>
             </div>
 
+            <!-- The form is controlled from js/app.js. -->
             <form id="search-form" class="search-form">
-                <label for="city-input">Въведи град:</label>
+                <label id="search-label" for="city-input">Въведи град:</label>
                 <div class="search-row">
                     <input
                         type="text"
@@ -31,26 +32,34 @@
                         placeholder="Напр. Sofia, London, Paris"
                         autocomplete="off"
                     >
-                    <button type="submit">Търси</button>
+                    <button id="search-button" type="submit">Търси</button>
                 </div>
             </form>
 
+            <!-- Toolbar buttons control unit, location and language. -->
             <div class="toolbar">
                 <button type="button" id="unit-toggle" class="secondary-button">Покажи във °F</button>
+                <button type="button" id="location-button" class="secondary-button location-button">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                    <span id="location-button-text">Моята локация</span>
+                </button>
+                <button type="button" id="language-toggle" class="secondary-button">EN</button>
             </div>
 
+            <!-- Search history is rendered from localStorage. -->
             <section id="history-section" class="history-section hidden" aria-label="История на търсенията">
-                <p>Последни търсения:</p>
+                <p id="history-title">Последни търсения:</p>
                 <div id="history-list" class="history-list"></div>
             </section>
 
             <p id="loading" class="loading hidden">
                 <i class="fa-solid fa-spinner"></i>
-                Зареждане на данни...
+                <span id="loading-text">Зареждане на данни...</span>
             </p>
 
             <p id="error-message" class="error-message hidden"></p>
 
+            <!-- JavaScript fills this section after a successful API response. -->
             <section id="weather-result" class="weather-result hidden" aria-live="polite">
                 <div class="city-line">
                     <h2 id="city-name">--</h2>
@@ -69,38 +78,64 @@
 
                 <div class="weather-details">
                     <div class="detail-box">
-                        <span>Вятър</span>
+                        <span id="wind-label">Вятър</span>
                         <strong id="wind-speed">-- km/h</strong>
                     </div>
                     <div class="detail-box">
-                        <span>Координати</span>
+                        <span id="feels-like-label">Усеща се като</span>
+                        <strong id="feels-like">--°C</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span id="humidity-label">Влажност</span>
+                        <strong id="humidity">--%</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span id="pressure-label">Налягане</span>
+                        <strong id="pressure">-- hPa</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span id="precipitation-label">Валеж сега</span>
+                        <strong id="precipitation">-- mm</strong>
+                    </div>
+                    <div class="detail-box">
+                        <span id="coordinates-label">Координати</span>
                         <strong id="coordinates">--</strong>
                     </div>
                 </div>
+
+                <div id="comfort-card" class="comfort-card">
+                    <div>
+                        <span id="comfort-label">Комфорт индекс</span>
+                        <strong id="comfort-score">--/100</strong>
+                    </div>
+                    <p id="comfort-message">--</p>
+                </div>
             </section>
 
+            <!-- Forecast cards are created dynamically from daily API data. -->
             <section id="forecast-section" class="forecast-section hidden" aria-label="5-дневна прогноза">
                 <div class="forecast-header">
                     <div>
-                        <p class="section-eyebrow">Прогноза</p>
-                        <h2>Следващи 5 дни</h2>
+                        <p id="forecast-eyebrow" class="section-eyebrow">Прогноза</p>
+                        <h2 id="forecast-title">Следващи 5 дни</h2>
                     </div>
-                    <span class="forecast-note">min / max</span>
+                    <span id="forecast-note" class="forecast-note">min / max</span>
                 </div>
                 <div id="forecast-list" class="forecast-list"></div>
             </section>
 
+            <!-- Leaflet map lets the user choose a location visually. -->
             <section class="map-section" aria-label="Интерактивна карта">
                 <div class="map-header">
                     <div>
-                        <p class="section-eyebrow">Карта</p>
-                        <h2>Избери място</h2>
+                        <p id="map-eyebrow" class="section-eyebrow">Карта</p>
+                        <h2 id="map-title">Избери място</h2>
                     </div>
-                    <span class="map-note">клик върху картата</span>
+                    <span id="map-note" class="map-note">клик върху картата</span>
                 </div>
                 <div class="map-hint">
-                    <span><i class="fa-solid fa-location-dot"></i> Цветен маркер според времето</span>
-                    <span><i class="fa-solid fa-hand-pointer"></i> Кликни върху карта</span>
+                    <span><i class="fa-solid fa-location-dot"></i> <span id="map-hint-marker">Цветен маркер според времето</span></span>
+                    <span><i class="fa-solid fa-hand-pointer"></i> <span id="map-hint-click">Кликни върху картата</span></span>
                 </div>
                 <div id="weather-map" class="weather-map"></div>
                 <p id="map-status" class="map-status">Картата е готова. Избери точка или потърси град.</p>

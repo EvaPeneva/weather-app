@@ -1,6 +1,7 @@
 /* =========================================================
    Map module
-   Handles Leaflet map setup, clicks and marker updates.
+   Handles Leaflet map setup, map clicks, marker styling and popup text.
+   This file does not fetch weather data. It only shows information on the map.
    ========================================================= */
 
 import { getWeatherCondition, getWeatherIcon, getWeatherTheme } from './weather-codes.js';
@@ -8,27 +9,34 @@ import { getWeatherCondition, getWeatherIcon, getWeatherTheme } from './weather-
 let map = null;
 let marker = null;
 
+// Creates the Leaflet map and connects click events to app.js.
 export function initWeatherMap(onMapClick) {
     if (!window.L) {
         return;
     }
 
+    // The map starts centered over Bulgaria, but no city is selected yet.
     map = L.map('weather-map', {
         zoomControl: true
     }).setView([42.7, 25.2], 6);
 
+    // OpenStreetMap tiles are free and work well for a school project.
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
+    // Leaflet gives us coordinates every time the user clicks on the map.
     map.on('click', (event) => {
         const { lat, lng } = event.latlng;
         onMapClick(lat, lng);
     });
 }
 
-export function updateMapMarker(latitude, longitude, label, weather = null) {
+/**
+ * Moves the map marker and updates the popup after search, map click or unit change.
+ */
+export function updateMapMarker(latitude, longitude, label, weather = null, language = 'bg', unit = 'C') {
     if (!map) {
         return;
     }
@@ -43,10 +51,14 @@ export function updateMapMarker(latitude, longitude, label, weather = null) {
         marker.setIcon(icon);
     }
 
-    marker.bindPopup(createPopupContent(label, weather)).openPopup();
+    // The popup also receives the unit, so it changes when °C/°F is toggled.
+    marker.bindPopup(createPopupContent(label, weather, language, unit)).openPopup();
     map.setView(position, 9);
 }
 
+/**
+ * Creates a custom marker icon that matches the current weather.
+ */
 function createWeatherMarkerIcon(weather) {
     const theme = weather ? getWeatherTheme(weather.weathercode, weather.is_day) : 'weather-cloudy';
     const iconClass = weather ? getWeatherIcon(weather.weathercode) : 'fa-location-dot';
@@ -60,24 +72,38 @@ function createWeatherMarkerIcon(weather) {
     });
 }
 
-function createPopupContent(label, weather) {
-    const safeLabel = escapeHtml(label || 'Избрано място');
+/**
+ * Creates the marker popup text and keeps its temperature unit synced with the page.
+ */
+function createPopupContent(label, weather, language, unit) {
+    const fallbackLabel = language === 'bg' ? 'Избрано място' : 'Selected place';
+    const safeLabel = escapeHtml(label || fallbackLabel);
 
     if (!weather) {
         return `<strong>${safeLabel}</strong>`;
     }
 
-    const temperature = Math.round(weather.temperature);
-    const condition = getWeatherCondition(weather.weathercode);
+    const temperature = formatMapTemperature(weather.temperature, unit);
+    const condition = getWeatherCondition(weather.weathercode, language);
 
     return `
         <div class="map-popup">
             <strong>${safeLabel}</strong>
-            <span>${temperature}°C · ${condition}</span>
+            <span>${temperature} · ${condition}</span>
         </div>
     `;
 }
 
+// Keeps the popup temperature in sync with the main unit button.
+function formatMapTemperature(celsius, unit) {
+    if (unit === 'F') {
+        return `${Math.round(celsius * 9 / 5 + 32)}°F`;
+    }
+
+    return `${Math.round(celsius)}°C`;
+}
+
+// Escapes user/API text before putting it in the popup HTML.
 function escapeHtml(value) {
     return String(value)
         .replaceAll('&', '&amp;')
